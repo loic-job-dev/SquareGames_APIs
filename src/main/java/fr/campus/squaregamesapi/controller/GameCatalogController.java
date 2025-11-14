@@ -13,7 +13,7 @@ public class GameCatalogController {
     @Autowired
     private GameCatalog gameCatalog;
 
-    @GetMapping("/gamecatalog")
+    @GetMapping("/games")
     public Collection<String> gamecatalog() {
         return gameCatalog.getGameIdentifiers();
     }
