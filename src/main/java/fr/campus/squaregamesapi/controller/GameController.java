@@ -1,6 +1,7 @@
 package fr.campus.squaregamesapi.controller;
 
 import fr.campus.squaregamesapi.controller.games.dto.GameCreationParams;
+import fr.campus.squaregamesapi.interfaces.GameFactoryCapable;
 import fr.campus.squaregamesapi.service.GameCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,12 +14,12 @@ import java.util.UUID;
 public class GameController {
 
     @Autowired
-    private GameCreator gameCreator;
+    private GameFactoryCapable gameCreator;
 
     @PostMapping("/games")
     public String createGame(@RequestBody GameCreationParams params) {
-        gameCreator.setGameFactory(params.getGameType());
-        gameCreator.createGame(params.getPlayerCountParam(), params.getBoardSizeParam());
+        this.gameCreator.setGameFactory(params.getGameType());
+        this.gameCreator.createGame(params.getPlayerCountParam(), params.getBoardSizeParam());
         return UUID.randomUUID().toString();
     }
 }
