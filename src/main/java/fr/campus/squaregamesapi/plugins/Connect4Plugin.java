@@ -29,6 +29,11 @@ public class Connect4Plugin implements GamePlugin {
     private MessageSource messageSource;
 
     @Override
+    public String getId() {
+        return gameId;
+    }
+
+    @Override
     public Game createGame() {
         return gameFactory.createGame(defaultPlayerCount, defaultBoardSize);
     }

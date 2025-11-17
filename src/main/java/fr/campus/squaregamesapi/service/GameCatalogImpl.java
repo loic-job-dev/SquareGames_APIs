@@ -1,20 +1,31 @@
 package fr.campus.squaregamesapi.service;
 
 import fr.campus.squaregamesapi.interfaces.GameCatalog;
-import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGame;
-import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGameFactory;
+import fr.le_campus_numerique.square_games.engine.GameFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
 public class GameCatalogImpl implements GameCatalog {
 
-    private TicTacToeGameFactory ticTacToeGameFactory = new TicTacToeGameFactory();
+    private final List<GameFactory> gameFactories;
+    private GameFactory gameFactory;
+
+    @Autowired
+    public GameCatalogImpl(List<GameFactory> gameFactories) {
+        this.gameFactories = gameFactories;
+    }
+
 
     @Override
-    public Collection<String> getGameIdentifiers() {
-        return List.of(ticTacToeGameFactory.getGameFactoryId());
+    public String getGameIdentifiers() {
+        String gameIdentifiers = "";
+        for (GameFactory gameFactory : gameFactories) {
+            gameIdentifiers += gameFactory.getGameFactoryId();
+            gameIdentifiers += "\n";
+        }
+        return gameIdentifiers;
     }
 }

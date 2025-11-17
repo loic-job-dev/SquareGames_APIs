@@ -29,6 +29,11 @@ public class TicTacToePlugin implements GamePlugin {
     private MessageSource messageSource;
 
     @Override
+    public String getId() {
+        return gameId; // "tictactoe"
+    }
+
+    @Override
     public Game createGame() {
         return gameFactory.createGame(defaultPlayerCount, defaultBoardSize);
     }
