@@ -3,6 +3,8 @@ package fr.campus.squaregamesapi.service;
 import fr.campus.squaregamesapi.interfaces.GameFactoryCapable;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.GameFactory;
+import fr.le_campus_numerique.square_games.engine.connectfour.ConnectFourGameFactory;
+import fr.le_campus_numerique.square_games.engine.taquin.TaquinGameFactory;
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGameFactory;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ public class GameCreator implements GameFactoryCapable {
     // Constructor injection
     public GameCreator(List<GameFactory> gameFactories) {
         factories.put("tictactoe", new TicTacToeGameFactory());
+        factories.put("15 puzzle", new TaquinGameFactory());
+        factories.put("connect4", new ConnectFourGameFactory());
     }
 
     @Override
