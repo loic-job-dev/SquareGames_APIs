@@ -5,16 +5,14 @@ import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
 import fr.campus.squaregamesapi.controller.games.dto.PlayersDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.campus.squaregamesapi.interfaces.GameService;
+import fr.le_campus_numerique.square_games.engine.CellPosition;
 import fr.le_campus_numerique.square_games.engine.Game;
+import fr.le_campus_numerique.square_games.engine.InvalidPositionException;
+import fr.le_campus_numerique.square_games.engine.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat.UUID;
+import java.util.*;
 
 @Service
 public class GameServiceImpl implements GameService {
@@ -91,6 +89,66 @@ public class GameServiceImpl implements GameService {
         game.getBoard().forEach((position, token) -> {
             grid[position.x()][position.y()] = token.getName();
         });
+
+        return new GameDTO(
+                gameId,
+                game.getBoardSize(),
+                game.getStatus().name(),
+                game.getCurrentPlayerId().toString(),
+                game.getStatus().name().equals("TERMINATED") && game.getCurrentPlayerId() != null
+                        ? game.getCurrentPlayerId().toString()
+                        : null,
+                remainingMoves,
+                players,
+                cells,
+                grid
+        );
+    }
+
+    @Override
+    public GameDTO playGame(String gameId, int j, int k) throws InvalidPositionException {
+        Game game = games.get(gameId);
+        if (game == null) {
+            throw new IllegalArgumentException("Game not found: " + gameId);
+        }
+
+        System.out.println("remaining tokens " + game.getRemainingTokens()); //remaining tokens [X,  O, X,  O, X,  O, X,  O, X]
+
+        Collection<Token> tokens = game.getRemainingTokens();
+        CellPosition cellPosition = new CellPosition(j, k);
+
+        List<Token> tokenList = tokens.stream().toList();
+        tokenList.get(0).moveTo(cellPosition);
+
+
+        int remainingMoves = game.getRemainingTokens().size();
+
+        int size = game.getBoardSize();
+
+        String[][] grid = new String[size][size];
+
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                grid[x][y] = ".";
+            }
+        }
+
+        game.getBoard().forEach((position, token) -> {
+            grid[position.x()][position.y()] = token.getName();
+        });
+
+        PlayersDTO players = new PlayersDTO(
+                game.getPlayerIds().toArray(new UUID[0])[0].toString(),
+                game.getPlayerIds().toArray(new UUID[0])[1].toString()
+        );
+        List<CellDTO> cells = game.getBoard().entrySet().stream()
+                .map(entry -> new CellDTO(
+                        entry.getKey().x(),
+                        entry.getKey().y(),
+                        entry.getValue().getName(),                         // "X" ou "0"
+                        entry.getValue().getOwnerId().orElseThrow().toString()
+                ))
+                .toList();
 
         return new GameDTO(
                 gameId,
