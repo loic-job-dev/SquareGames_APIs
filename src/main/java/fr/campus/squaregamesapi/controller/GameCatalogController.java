@@ -19,7 +19,7 @@ public class GameCatalogController {
     }
 
     @GetMapping("/games/{gameId}")
-    public Object getGame(@PathVariable String gameId) {
+    public Object getGame(@PathVariable("gameId") String gameId) {
         // TODO - actually get and return game with id 'gameId'
         return gameCatalog.getGameRules(LocaleContextHolder.getLocale(), gameId);
     }

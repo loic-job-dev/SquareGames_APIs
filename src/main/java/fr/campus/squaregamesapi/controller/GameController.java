@@ -2,8 +2,8 @@ package fr.campus.squaregamesapi.controller;
 
 import fr.campus.squaregamesapi.controller.games.dto.GameCreationParams;
 import fr.campus.squaregamesapi.interfaces.GameService;
+import fr.le_campus_numerique.square_games.engine.Game;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,13 +17,12 @@ public class GameController {
     @PostMapping("/games")
     public String createGame(@RequestBody GameCreationParams params) {
         this.gameService.setGamePlugin(params.getGameType());
-        this.gameService.createGame();
-        return this.gameService.getName(LocaleContextHolder.getLocale()); // the name of the game
+        Game game = this.gameService.createGame();
+        return game.getId().toString();// the id of the game
     }
 
-    @GetMapping("/sessions/{sessionId}")
-    public Object getGame(@PathVariable String sessionId) {
-    // TODO - actually get and return game with id 'gameId'
-        return "Game id: " + sessionId;
+    @GetMapping("/sessions/{gameId}/status")
+    public String gameStatus(@PathVariable("gameId") String gameId) {
+        return this.gameService.getGameStatus(gameId);
     }
 }

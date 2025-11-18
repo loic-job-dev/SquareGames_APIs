@@ -12,5 +12,7 @@ public interface GameService {
 
     public Game createGame();
 
-    public String getName(Locale locale);
+    public Game getGame(String gameId);
+
+    public String getGameStatus(String gameId);
 }
