@@ -23,7 +23,6 @@ public class GameCatalogImpl implements GameCatalog {
     @Autowired
     private MessageSource messageSource;
 
-    @Override
     public String getGameIdentifiers() {
         String gameIdentifiers = "";
         for (GameFactory gameFactory : gameFactories) {
@@ -33,7 +32,6 @@ public class GameCatalogImpl implements GameCatalog {
         return gameIdentifiers;
     }
 
-    @Override
     public String getGamesRules(Locale locale) {
         String gamesRules =  "";
         for (GameFactory gameFactory : gameFactories) {
@@ -59,7 +57,6 @@ public class GameCatalogImpl implements GameCatalog {
         return  gamesRules;
     }
 
-    @Override
     public String getGameRules(Locale locale, String gameId) {
         String gamesRules =  "";
         switch(gameId) {

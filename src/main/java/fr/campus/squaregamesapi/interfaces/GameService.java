@@ -1,5 +1,6 @@
 package fr.campus.squaregamesapi.interfaces;
 
+import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
 import fr.le_campus_numerique.square_games.engine.Game;
 import org.springframework.stereotype.Service;
 
@@ -15,4 +16,6 @@ public interface GameService {
     public Game getGame(String gameId);
 
     public String getGameStatus(String gameId);
+
+    public GameDTO getGameDTO(String gameId);
 }

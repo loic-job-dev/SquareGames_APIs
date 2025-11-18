@@ -1,6 +1,7 @@
 package fr.campus.squaregamesapi.controller;
 
 import fr.campus.squaregamesapi.controller.games.dto.GameCreationParams;
+import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
 import fr.campus.squaregamesapi.interfaces.GameService;
 import fr.le_campus_numerique.square_games.engine.Game;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,10 @@ public class GameController {
     @GetMapping("/sessions/{gameId}/status")
     public String gameStatus(@PathVariable("gameId") String gameId) {
         return this.gameService.getGameStatus(gameId);
+    }
+
+    @GetMapping("/sessions/{gameId}")
+    public GameDTO gameInformations(@PathVariable("gameId") String gameId) {
+        return this.gameService.getGameDTO(gameId);
     }
 }
