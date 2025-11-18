@@ -114,54 +114,16 @@ public class GameServiceImpl implements GameService {
 
         System.out.println("remaining tokens " + game.getRemainingTokens()); //remaining tokens [X,  O, X,  O, X,  O, X,  O, X]
 
-        Collection<Token> tokens = game.getRemainingTokens();
-        CellPosition cellPosition = new CellPosition(j, k);
+        if (game.getFactoryId().equals("tictactoe")) {
 
-        List<Token> tokenList = tokens.stream().toList();
-        tokenList.get(0).moveTo(cellPosition);
+            CellPosition cellPosition = new CellPosition(j, k);
 
+            List<Token> tokenList = game.getRemainingTokens().stream().toList();
+            tokenList.get(0).moveTo(cellPosition);
 
-        int remainingMoves = game.getRemainingTokens().size();
-
-        int size = game.getBoardSize();
-
-        String[][] grid = new String[size][size];
-
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
-                grid[x][y] = ".";
-            }
+            return getGameDTO(gameId);
+        } else {
+            return null;
         }
-
-        game.getBoard().forEach((position, token) -> {
-            grid[position.x()][position.y()] = token.getName();
-        });
-
-        PlayersDTO players = new PlayersDTO(
-                game.getPlayerIds().toArray(new UUID[0])[0].toString(),
-                game.getPlayerIds().toArray(new UUID[0])[1].toString()
-        );
-        List<CellDTO> cells = game.getBoard().entrySet().stream()
-                .map(entry -> new CellDTO(
-                        entry.getKey().x(),
-                        entry.getKey().y(),
-                        entry.getValue().getName(),                         // "X" ou "0"
-                        entry.getValue().getOwnerId().orElseThrow().toString()
-                ))
-                .toList();
-
-        return new GameDTO(
-                gameId,
-                game.getBoardSize(),
-                game.getStatus().name(),
-                game.getCurrentPlayerId().toString(),
-                game.getStatus().name().equals("TERMINATED") && game.getCurrentPlayerId() != null
-                        ? game.getCurrentPlayerId().toString()
-                        : null,
-                remainingMoves,
-                players,
-                cells,
-                grid
-        );
     }
 }
