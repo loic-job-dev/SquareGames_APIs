@@ -6,5 +6,7 @@ import java.util.Locale;
 public interface GameCatalog {
     String getGameIdentifiers();
 
-    String getGameRules(Locale locale);
+    String getGamesRules(Locale locale);
+
+    String getGameRules(Locale locale, String gameId);
 }

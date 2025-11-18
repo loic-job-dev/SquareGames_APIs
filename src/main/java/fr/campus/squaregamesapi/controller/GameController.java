@@ -18,12 +18,12 @@ public class GameController {
     public String createGame(@RequestBody GameCreationParams params) {
         this.gameService.setGamePlugin(params.getGameType());
         this.gameService.createGame();
-        return this.gameService.getName(LocaleContextHolder.getLocale());
+        return this.gameService.getName(LocaleContextHolder.getLocale()); // the name of the game
     }
 
-    @GetMapping("/games/{gameId}")
-    public Object getGame(@PathVariable String gameId) {
+    @GetMapping("/sessions/{sessionId}")
+    public Object getGame(@PathVariable String sessionId) {
     // TODO - actually get and return game with id 'gameId'
-        return "Game id: " + gameId;
+        return "Game id: " + sessionId;
     }
 }

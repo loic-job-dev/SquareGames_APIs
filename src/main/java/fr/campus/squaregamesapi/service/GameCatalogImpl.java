@@ -34,28 +34,51 @@ public class GameCatalogImpl implements GameCatalog {
     }
 
     @Override
-    public String getGameRules(Locale locale) {
-        String gameRules =  "";
+    public String getGamesRules(Locale locale) {
+        String gamesRules =  "";
         for (GameFactory gameFactory : gameFactories) {
             String gameIdentifier = gameFactory.getGameFactoryId();
             switch(gameIdentifier) {
                 case "tictactoe": {
-                    gameRules += messageSource.getMessage("tictactoe.rules", null, locale);
-                    gameRules += "\n";
+                    gamesRules += messageSource.getMessage("tictactoe.rules", null, locale);
+                    gamesRules += "\n";
                     break;
                 }
                 case "connect4": {
-                    gameRules += messageSource.getMessage("connect4.rules", null, locale);
-                    gameRules += "\n";
+                    gamesRules += messageSource.getMessage("connect4.rules", null, locale);
+                    gamesRules += "\n";
                     break;
                 }
                 case "15 puzzle": {
-                    gameRules += messageSource.getMessage("15puzzle.rules", null, locale);
-                    gameRules += "\n";
+                    gamesRules += messageSource.getMessage("15puzzle.rules", null, locale);
+                    gamesRules += "\n";
                     break;
                 }
             }
         }
-        return  gameRules;
+        return  gamesRules;
+    }
+
+    @Override
+    public String getGameRules(Locale locale, String gameId) {
+        String gamesRules =  "";
+        switch(gameId) {
+            case "tictactoe": {
+                gamesRules += messageSource.getMessage("tictactoe.rules", null, locale);
+                gamesRules += "\n";
+                break;
+            }
+            case "connect4": {
+                gamesRules += messageSource.getMessage("connect4.rules", null, locale);
+                gamesRules += "\n";
+                break;
+            }
+            case "15puzzle": {
+                gamesRules += messageSource.getMessage("15puzzle.rules", null, locale);
+                gamesRules += "\n";
+                break;
+            }
+        }
+        return  gamesRules;
     }
 }
