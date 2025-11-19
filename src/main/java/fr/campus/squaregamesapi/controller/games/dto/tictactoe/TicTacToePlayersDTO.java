@@ -1,10 +1,10 @@
-package fr.campus.squaregamesapi.controller.games.dto;
+package fr.campus.squaregamesapi.controller.games.dto.tictactoe;
 
-public class PlayersDTO {
+public class TicTacToePlayersDTO {
     private String playerA;
     private String playerB;
 
-    public PlayersDTO(String playerA, String playerB) {
+    public TicTacToePlayersDTO(String playerA, String playerB) {
         this.playerA = playerA;
         this.playerB = playerB;
     }

@@ -1,10 +1,10 @@
-package fr.campus.squaregamesapi.controller.games.dto;
+package fr.campus.squaregamesapi.controller.games.dto.tictactoe;
 
-public class CellPositionDTO {
+public class TicTacToeCellPositionDTO {
     private int k;
     private int j;
 
-    public CellPositionDTO(int k, int j) {
+    public TicTacToeCellPositionDTO(int k, int j) {
         this.k = k;
         this.j = j;
     }

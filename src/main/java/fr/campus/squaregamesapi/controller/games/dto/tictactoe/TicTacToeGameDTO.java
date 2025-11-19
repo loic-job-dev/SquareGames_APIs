@@ -1,8 +1,8 @@
-package fr.campus.squaregamesapi.controller.games.dto;
+package fr.campus.squaregamesapi.controller.games.dto.tictactoe;
 
 import java.util.List;
 
-public class GameDTO {
+public class TicTacToeGameDTO {
 
     private String gameId;
     private int boardSize;
@@ -11,13 +11,13 @@ public class GameDTO {
     private String winner;
     private int remainingMoves;
 
-    private PlayersDTO players;
-    private List<CellDTO> board;
+    private TicTacToePlayersDTO players;
+    private List<TicTacToeCellDTO> board;
     private String[][] grid;
 
-    public GameDTO(String gameId, int boardSize, String status,
-                   String currentPlayer, String winner, int remainingMoves,
-                   PlayersDTO players, List<CellDTO> board, String[][] grid) {
+    public TicTacToeGameDTO(String gameId, int boardSize, String status,
+                            String currentPlayer, String winner, int remainingMoves,
+                            TicTacToePlayersDTO players, List<TicTacToeCellDTO> board, String[][] grid) {
         this.gameId = gameId;
         this.boardSize = boardSize;
         this.status = status;
@@ -53,11 +53,11 @@ public class GameDTO {
         return remainingMoves;
     }
 
-    public PlayersDTO getPlayers() {
+    public TicTacToePlayersDTO getPlayers() {
         return players;
     }
 
-    public List<CellDTO> getBoard() {
+    public List<TicTacToeCellDTO> getBoard() {
         return board;
     }
 

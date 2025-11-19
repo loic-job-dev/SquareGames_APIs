@@ -1,8 +1,8 @@
 package fr.campus.squaregamesapi.service;
 
-import fr.campus.squaregamesapi.controller.games.dto.CellDTO;
-import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
-import fr.campus.squaregamesapi.controller.games.dto.PlayersDTO;
+import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeCellDTO;
+import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeGameDTO;
+import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToePlayersDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.campus.squaregamesapi.interfaces.GameService;
 import fr.le_campus_numerique.square_games.engine.CellPosition;
@@ -55,18 +55,18 @@ public class GameServiceImpl implements GameService {
         return game.getStatus().toString();
     }
 
-    public GameDTO getGameDTO(String gameId) {
+    public TicTacToeGameDTO getGameDTO(String gameId) {
         Game game = games.get(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
 
-        PlayersDTO players = new PlayersDTO(
+        TicTacToePlayersDTO players = new TicTacToePlayersDTO(
                 game.getPlayerIds().toArray(new UUID[0])[0].toString(),
                 game.getPlayerIds().toArray(new UUID[0])[1].toString()
         );
-        List<CellDTO> cells = game.getBoard().entrySet().stream()
-                .map(entry -> new CellDTO(
+        List<TicTacToeCellDTO> cells = game.getBoard().entrySet().stream()
+                .map(entry -> new TicTacToeCellDTO(
                         entry.getKey().x(),
                         entry.getKey().y(),
                         entry.getValue().getName(),                         // "X" ou "0"
@@ -80,17 +80,19 @@ public class GameServiceImpl implements GameService {
 
         String[][] grid = new String[size][size];
 
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
-                grid[x][y] = ".";
+        // initialisation
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                grid[y][x] = ".";
             }
         }
 
+        // remplissage avec les tokens
         game.getBoard().forEach((position, token) -> {
-            grid[position.x()][position.y()] = token.getName();
+            grid[position.y()][position.x()] = token.getName();
         });
 
-        return new GameDTO(
+        return new TicTacToeGameDTO(
                 gameId,
                 game.getBoardSize(),
                 game.getStatus().name(),
@@ -106,7 +108,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameDTO playGame(String gameId, int j, int k) throws InvalidPositionException {
+    public TicTacToeGameDTO playGame(String gameId, int j, int k) throws InvalidPositionException {
         Game game = games.get(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
