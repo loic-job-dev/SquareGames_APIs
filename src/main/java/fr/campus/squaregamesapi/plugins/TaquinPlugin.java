@@ -1,5 +1,6 @@
 package fr.campus.squaregamesapi.plugins;
 
+import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.GameFactory;
@@ -41,5 +42,10 @@ public class TaquinPlugin implements GamePlugin {
     @Override
     public String getName(Locale locale) {
         return messageSource.getMessage("15puzzle.name", null, locale);
+    }
+
+    @Override
+    public GameDTO buildDTO(Game game) {
+        return null;
     }
 }

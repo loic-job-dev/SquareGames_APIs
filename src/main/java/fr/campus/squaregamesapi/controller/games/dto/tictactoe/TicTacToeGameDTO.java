@@ -1,12 +1,11 @@
 package fr.campus.squaregamesapi.controller.games.dto.tictactoe;
 
+import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
+
 import java.util.List;
 
-public class TicTacToeGameDTO {
+public class TicTacToeGameDTO extends GameDTO {
 
-    private String gameId;
-    private int boardSize;
-    private String status;
     private String currentPlayer;
     private String winner;
     private int remainingMoves;
@@ -18,9 +17,7 @@ public class TicTacToeGameDTO {
     public TicTacToeGameDTO(String gameId, int boardSize, String status,
                             String currentPlayer, String winner, int remainingMoves,
                             TicTacToePlayersDTO players, List<TicTacToeCellDTO> board, String[][] grid) {
-        this.gameId = gameId;
-        this.boardSize = boardSize;
-        this.status = status;
+        super(gameId, status, boardSize);
         this.currentPlayer = currentPlayer;
         this.winner = winner;
         this.remainingMoves = remainingMoves;

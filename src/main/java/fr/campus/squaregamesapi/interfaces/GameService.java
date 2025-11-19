@@ -1,5 +1,6 @@
 package fr.campus.squaregamesapi.interfaces;
 
+import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
 import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeGameDTO;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.InvalidPositionException;
@@ -16,7 +17,7 @@ public interface GameService {
 
     public String getGameStatus(String gameId);
 
-    public TicTacToeGameDTO getGameDTO(String gameId);
+    public GameDTO getGameDTO(String gameId);
 
-    public TicTacToeGameDTO playGame(String gameId, int x, int y) throws InvalidPositionException;
+    public GameDTO playGame(String gameId, int x, int y) throws InvalidPositionException;
 }

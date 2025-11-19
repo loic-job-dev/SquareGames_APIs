@@ -1,5 +1,9 @@
 package fr.campus.squaregamesapi.plugins;
 
+import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
+import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeCellDTO;
+import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeGameDTO;
+import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToePlayersDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.GameFactory;
@@ -9,7 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 @Component
 public class TicTacToePlugin implements GamePlugin {
@@ -41,5 +47,53 @@ public class TicTacToePlugin implements GamePlugin {
     @Override
     public String getName(Locale locale) {
         return messageSource.getMessage("tictactoe.name", null, locale);
+    }
+
+    @Override
+    public TicTacToeGameDTO buildDTO(Game game) {
+        TicTacToePlayersDTO players = new TicTacToePlayersDTO(
+                game.getPlayerIds().toArray(new UUID[0])[0].toString(),
+                game.getPlayerIds().toArray(new UUID[0])[1].toString()
+        );
+        List<TicTacToeCellDTO> cells = game.getBoard().entrySet().stream()
+                .map(entry -> new TicTacToeCellDTO(
+                        entry.getKey().x(),
+                        entry.getKey().y(),
+                        entry.getValue().getName(),                         // "X" ou "0"
+                        entry.getValue().getOwnerId().orElseThrow().toString()
+                ))
+                .toList();
+
+        int remainingMoves = game.getRemainingTokens().size();
+
+        int size = game.getBoardSize();
+
+        String[][] grid = new String[size][size];
+
+        // initialisation
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                grid[y][x] = ".";
+            }
+        }
+
+        // remplissage avec les tokens
+        game.getBoard().forEach((position, token) -> {
+            grid[position.y()][position.x()] = token.getName();
+        });
+
+        return new TicTacToeGameDTO(
+                gameId,
+                game.getBoardSize(),
+                game.getStatus().name(),
+                game.getCurrentPlayerId().toString(),
+                game.getStatus().name().equals("TERMINATED") && game.getCurrentPlayerId() != null
+                        ? game.getCurrentPlayerId().toString()
+                        : null,
+                remainingMoves,
+                players,
+                cells,
+                grid
+        );
     }
 }

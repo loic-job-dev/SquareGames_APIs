@@ -1,5 +1,6 @@
 package fr.campus.squaregamesapi.controller;
 
+import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
 import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeCellPositionDTO;
 import fr.campus.squaregamesapi.controller.games.dto.GameCreationParams;
 import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeGameDTO;
@@ -30,12 +31,12 @@ public class GameController {
     }
 
     @GetMapping("/sessions/{gameId}")
-    public TicTacToeGameDTO gameInformations(@PathVariable("gameId") String gameId) {
+    public GameDTO gameInformations(@PathVariable("gameId") String gameId) {
         return this.gameService.getGameDTO(gameId);
     }
 
     @PostMapping("/sessions/{gameId}")
-    public TicTacToeGameDTO gamePlay(@PathVariable("gameId") String gameId, @RequestBody TicTacToeCellPositionDTO cellPosition) {
+    public GameDTO gamePlay(@PathVariable("gameId") String gameId, @RequestBody TicTacToeCellPositionDTO cellPosition) {
         try {
             return this.gameService.playGame(gameId, cellPosition.getJ(), cellPosition.getK());
         } catch (InvalidPositionException e) {
