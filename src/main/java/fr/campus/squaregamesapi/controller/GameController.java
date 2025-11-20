@@ -10,6 +10,8 @@ import fr.le_campus_numerique.square_games.engine.InvalidPositionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 public class GameController {
@@ -23,6 +25,11 @@ public class GameController {
         this.gameService.setGamePlugin(params.getGameType());
         Game game = this.gameService.createGame();
         return game.getId().toString();// the id of the game
+    }
+
+    @GetMapping("/sessions")
+    public List<String> getGames() {
+        return this.gameService.getSessions();
     }
 
     @GetMapping("/sessions/{gameId}/status")

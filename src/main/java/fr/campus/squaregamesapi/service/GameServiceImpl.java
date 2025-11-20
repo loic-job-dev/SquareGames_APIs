@@ -52,6 +52,16 @@ public class GameServiceImpl implements GameService {
         //return games.get(gameId);
     }
 
+    public List<String> getSessions() {
+        List<Game> games = this.gameDAO.getGames();
+        List<String> gamesIds = new ArrayList<>();
+        for (Game game : games) {
+            String gameId = game.getId().toString();
+            gamesIds.add(gameId);
+        }
+        return gamesIds;
+    };
+
     public String getGameStatus(String gameId) {
         Game game = gameDAO.getGameById(gameId);
         if (game == null) {
