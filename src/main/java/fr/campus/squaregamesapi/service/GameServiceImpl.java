@@ -1,6 +1,7 @@
 package fr.campus.squaregamesapi.service;
 
 import fr.campus.squaregamesapi.dto.GameDTO;
+import fr.campus.squaregamesapi.interfaces.GameDAO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.campus.squaregamesapi.interfaces.GameService;
 import fr.le_campus_numerique.square_games.engine.Game;
@@ -13,14 +14,16 @@ import java.util.*;
 @Service
 public class GameServiceImpl implements GameService {
 
+    private final GameDAO gameDAO;
     private final List<GamePlugin> gamePlugins;
     private GamePlugin gamePlugin;
 
-    private final Map<String, Game> games = new HashMap<>();
+    //private final Map<String, Game> games = new HashMap<>();
 
     @Autowired
-    public GameServiceImpl(List<GamePlugin> gamePlugins) {
+    public GameServiceImpl(List<GamePlugin> gamePlugins, GameDAO  gameDAO) {
         this.gamePlugins = gamePlugins;
+        this.gameDAO = gameDAO;
     }
 
     public void setGamePlugin(String gameId) {
@@ -35,16 +38,22 @@ public class GameServiceImpl implements GameService {
 
     public Game createGame() {
         Game game = this.gamePlugin.createGame();
-        games.put(game.getId().toString(), game);
+        gameDAO.addGame(game);
+        //games.put(game.getId().toString(), game);
         return game;
     }
 
     public Game getGame(String gameId) {
-        return games.get(gameId);
+        Game game = gameDAO.getGameById(gameId);
+        if (game == null) {
+            throw new IllegalArgumentException("Game not found: " + gameId);
+        }
+        return game;
+        //return games.get(gameId);
     }
 
     public String getGameStatus(String gameId) {
-        Game game = games.get(gameId);
+        Game game = gameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -52,7 +61,7 @@ public class GameServiceImpl implements GameService {
     }
 
     public GameDTO getGameDTO(String gameId) {
-        Game game = games.get(gameId);
+        Game game = gameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -68,7 +77,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public GameDTO playGame(String gameId, int j, int k) throws InvalidPositionException {
-        Game game = games.get(gameId);
+        Game game = gameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -80,6 +89,7 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new IllegalArgumentException("No plugin found for game type"));
 
         plugin.play(game, j, k);
+        gameDAO.updateGame(game);
 
         return plugin.buildDTO(game);
     }
