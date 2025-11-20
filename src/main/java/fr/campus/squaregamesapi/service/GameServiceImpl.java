@@ -3,10 +3,8 @@ package fr.campus.squaregamesapi.service;
 import fr.campus.squaregamesapi.dto.GameDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.campus.squaregamesapi.interfaces.GameService;
-import fr.le_campus_numerique.square_games.engine.CellPosition;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.InvalidPositionException;
-import fr.le_campus_numerique.square_games.engine.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,16 +75,14 @@ public class GameServiceImpl implements GameService {
 
         System.out.println("remaining tokens " + game.getRemainingTokens()); //remaining tokens [X,  O, X,  O, X,  O, X,  O, X]
 
-        if (game.getFactoryId().equals("tictactoe")) {
+        // Trouver le plugin qui correspond à ce jeu
+        GamePlugin plugin = gamePlugins.stream()
+                .filter(p -> p.getId().equalsIgnoreCase(game.getFactoryId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No plugin found for game type"));
 
-            CellPosition cellPosition = new CellPosition(j, k);
+        plugin.play(game, j, k);
 
-            List<Token> tokenList = game.getRemainingTokens().stream().toList();
-            tokenList.get(0).moveTo(cellPosition);
-
-            return getGameDTO(gameId);
-        } else {
-            return null;
-        }
+        return plugin.buildDTO(game);
     }
 }

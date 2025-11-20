@@ -6,10 +6,10 @@ import java.util.List;
 
 public class TicTacToeGameDTO extends GameDTO {
 
+    private int boardSize;
     private String currentPlayer;
     private String winner;
     private int remainingMoves;
-
     private TicTacToePlayersDTO players;
     private List<TicTacToeCellDTO> board;
     private String[][] grid;
@@ -17,7 +17,8 @@ public class TicTacToeGameDTO extends GameDTO {
     public TicTacToeGameDTO(String gameId, int boardSize, String status,
                             String currentPlayer, String winner, int remainingMoves,
                             TicTacToePlayersDTO players, List<TicTacToeCellDTO> board, String[][] grid) {
-        super(gameId, status, boardSize);
+        super(gameId, status);
+        this.boardSize = boardSize;
         this.currentPlayer = currentPlayer;
         this.winner = winner;
         this.remainingMoves = remainingMoves;

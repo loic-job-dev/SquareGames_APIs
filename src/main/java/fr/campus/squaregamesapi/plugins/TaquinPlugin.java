@@ -48,4 +48,9 @@ public class TaquinPlugin implements GamePlugin {
     public GameDTO buildDTO(Game game) {
         return null;
     }
+
+    @Override
+    public void play(Game game, int x, int y) {
+
+    }
 }

@@ -4,8 +4,7 @@ import fr.campus.squaregamesapi.dto.tictactoe.TicTacToeCellDTO;
 import fr.campus.squaregamesapi.dto.tictactoe.TicTacToeGameDTO;
 import fr.campus.squaregamesapi.dto.tictactoe.TicTacToePlayersDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
-import fr.le_campus_numerique.square_games.engine.Game;
-import fr.le_campus_numerique.square_games.engine.GameFactory;
+import fr.le_campus_numerique.square_games.engine.*;
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGameFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -94,5 +93,13 @@ public class TicTacToePlugin implements GamePlugin {
                 cells,
                 grid
         );
+    }
+
+    @Override
+    public void play(Game game, int x, int y) throws InvalidPositionException {
+        CellPosition cellPosition = new CellPosition(x, y);
+
+        List<Token> tokenList = game.getRemainingTokens().stream().toList();
+        tokenList.get(0).moveTo(cellPosition);
     }
 }
