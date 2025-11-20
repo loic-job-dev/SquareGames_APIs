@@ -73,8 +73,6 @@ public class GameServiceImpl implements GameService {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
 
-        System.out.println("remaining tokens " + game.getRemainingTokens()); //remaining tokens [X,  O, X,  O, X,  O, X,  O, X]
-
         // Trouver le plugin qui correspond à ce jeu
         GamePlugin plugin = gamePlugins.stream()
                 .filter(p -> p.getId().equalsIgnoreCase(game.getFactoryId()))

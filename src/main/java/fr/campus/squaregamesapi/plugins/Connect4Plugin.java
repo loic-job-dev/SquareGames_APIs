@@ -4,8 +4,7 @@ import fr.campus.squaregamesapi.dto.GameDTO;
 import fr.campus.squaregamesapi.dto.connect4.Connect4TokenDTO;
 import fr.campus.squaregamesapi.dto.connect4.Connect4GameDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
-import fr.le_campus_numerique.square_games.engine.Game;
-import fr.le_campus_numerique.square_games.engine.GameFactory;
+import fr.le_campus_numerique.square_games.engine.*;
 import fr.le_campus_numerique.square_games.engine.connectfour.ConnectFourGameFactory;
 import fr.le_campus_numerique.square_games.engine.connectfour.ConnectFourGame;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +101,12 @@ public class Connect4Plugin implements GamePlugin {
     }
 
     @Override
-    public void play(Game game, int x, int y) {
-
+    public void play(Game game, int column, int ignored) throws InvalidPositionException {
+        // Connect4 ignore la ligne : gravité gérée par le moteur
+        game.getRemainingTokens()
+                .stream()
+                .findFirst()
+                .orElseThrow()
+                .moveTo(new CellPosition(column, -1));
     }
 }

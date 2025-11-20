@@ -1,6 +1,7 @@
 package fr.campus.squaregamesapi.controller;
 
 import fr.campus.squaregamesapi.dto.GameDTO;
+import fr.campus.squaregamesapi.dto.PlayMoveDTO;
 import fr.campus.squaregamesapi.dto.tictactoe.TicTacToeCellPositionDTO;
 import fr.campus.squaregamesapi.dto.GameCreationParams;
 import fr.campus.squaregamesapi.interfaces.GameService;
@@ -35,11 +36,11 @@ public class GameController {
     }
 
     @PostMapping("/sessions/{gameId}")
-    public GameDTO gamePlay(@PathVariable("gameId") String gameId, @RequestBody TicTacToeCellPositionDTO cellPosition) {
+    public GameDTO gamePlay(@PathVariable("gameId") String gameId, @RequestBody PlayMoveDTO move) {
         try {
-            return this.gameService.playGame(gameId, cellPosition.getJ(), cellPosition.getK());
+            return this.gameService.playGame(gameId, move.getX(), move.getY());
         } catch (InvalidPositionException e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }

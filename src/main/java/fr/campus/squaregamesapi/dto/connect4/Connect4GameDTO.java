@@ -6,39 +6,68 @@ import java.util.List;
 
 public class Connect4GameDTO extends GameDTO {
 
-    private final String redPlayerId;
-    private final String yellowPlayerId;
+    private final String redPlayer;
+    private final String yellowPlayer;
     private final String currentPlayer;
-    private final String winner; // null si personne
-    private final int remainingMoves;
-
-    private final int rows = 6;
-    private final int columns = 7;
-
-    private final String[][] grid; // 6 lignes × 7 colonnes
+    private final String winner;
+    private final int remainingTokens;
+    private final String[][] grid;
     private final List<Connect4TokenDTO> tokens;
 
     public Connect4GameDTO(
             String gameId,
             String status,
-            String redPlayerId,
-            String yellowPlayerId,
+            String redPlayer,
+            String yellowPlayer,
             String currentPlayer,
             String winner,
-            int remainingMoves,
+            int remainingTokens,
             String[][] grid,
             List<Connect4TokenDTO> tokens
     ) {
-        super(gameId, status);
-        this.redPlayerId = redPlayerId;
-        this.yellowPlayerId = yellowPlayerId;
+        super(gameId, status);  // boardSize pas utilisé ici mais hérité
+        this.redPlayer = redPlayer;
+        this.yellowPlayer = yellowPlayer;
         this.currentPlayer = currentPlayer;
         this.winner = winner;
-        this.remainingMoves = remainingMoves;
+        this.remainingTokens = remainingTokens;
         this.grid = grid;
         this.tokens = tokens;
     }
 
-    public int getRows() { return rows; }
-    public int getColumns() { return columns; }
+    public String getRedPlayer() {
+        return redPlayer;
+    }
+
+    public String getYellowPlayer() {
+        return yellowPlayer;
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public int getRemainingTokens() {
+        return remainingTokens;
+    }
+
+    public String[][] getGrid() {
+        return grid;
+    }
+
+    public List<Connect4TokenDTO> getTokens() {
+        return tokens;
+    }
+
+    public int getRows() {
+        return 6;
+    }
+
+    public int getColumns() {
+        return 7;
+    }
 }

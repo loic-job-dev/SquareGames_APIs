@@ -1,18 +1,18 @@
 package fr.campus.squaregamesapi.dto.tictactoe;
 
 public class TicTacToeCellPositionDTO {
-    private int k;
-    private int j;
+    private int x;
+    private int y;
 
-    public TicTacToeCellPositionDTO(int k, int j) {
-        this.k = k;
-        this.j = j;
+    public TicTacToeCellPositionDTO(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public int getK() {
-        return k;
+    public int getX() {
+        return x;
     }
-    public int getJ() {
-        return j;
+    public int getY() {
+        return y;
     }
 }
