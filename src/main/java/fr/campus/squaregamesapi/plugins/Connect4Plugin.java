@@ -1,6 +1,6 @@
 package fr.campus.squaregamesapi.plugins;
 
-import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
+import fr.campus.squaregamesapi.dto.GameDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.GameFactory;

@@ -1,4 +1,4 @@
-package fr.campus.squaregamesapi.controller.games.dto;
+package fr.campus.squaregamesapi.dto;
 
 public abstract class GameDTO {
     protected final String gameId;

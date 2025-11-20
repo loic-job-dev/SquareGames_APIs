@@ -1,9 +1,6 @@
 package fr.campus.squaregamesapi.service;
 
-import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
-import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeCellDTO;
-import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToeGameDTO;
-import fr.campus.squaregamesapi.controller.games.dto.tictactoe.TicTacToePlayersDTO;
+import fr.campus.squaregamesapi.dto.GameDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.campus.squaregamesapi.interfaces.GameService;
 import fr.le_campus_numerique.square_games.engine.CellPosition;

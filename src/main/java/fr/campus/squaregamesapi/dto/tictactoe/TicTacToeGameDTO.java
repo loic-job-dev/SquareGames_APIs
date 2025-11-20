@@ -1,6 +1,6 @@
-package fr.campus.squaregamesapi.controller.games.dto.tictactoe;
+package fr.campus.squaregamesapi.dto.tictactoe;
 
-import fr.campus.squaregamesapi.controller.games.dto.GameDTO;
+import fr.campus.squaregamesapi.dto.GameDTO;
 
 import java.util.List;
 

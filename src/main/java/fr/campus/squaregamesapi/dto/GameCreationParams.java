@@ -1,4 +1,4 @@
-package fr.campus.squaregamesapi.controller.games.dto;
+package fr.campus.squaregamesapi.dto;
 
 public class GameCreationParams {
 

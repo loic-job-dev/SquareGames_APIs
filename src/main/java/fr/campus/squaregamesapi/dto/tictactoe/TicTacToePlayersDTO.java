@@ -1,4 +1,4 @@
-package fr.campus.squaregamesapi.controller.games.dto.tictactoe;
+package fr.campus.squaregamesapi.dto.tictactoe;
 
 public class TicTacToePlayersDTO {
     private String playerA;
