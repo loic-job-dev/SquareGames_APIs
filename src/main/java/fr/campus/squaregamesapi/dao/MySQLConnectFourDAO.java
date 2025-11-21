@@ -34,28 +34,47 @@ public class MySQLConnectFourDAO extends AbstractMySQLGameDAO {
             Connection conn = databaseConnection.getConnection();
             conn.setAutoCommit(false);
 
-            // --- 1️⃣ Insert or update the game ---
+            // --- 1️⃣ Insert or update le jeu ---
             try (PreparedStatement stmt = conn.prepareStatement(
                     "INSERT INTO game (id, factory_id, board_size, player_count) " +
                             "VALUES (?, ?, ?, ?) " +
                             "ON DUPLICATE KEY UPDATE factory_id = VALUES(factory_id), board_size = VALUES(board_size), player_count = VALUES(player_count)")) {
+
                 stmt.setString(1, gameId);
                 stmt.setString(2, factoryId);
                 stmt.setInt(3, c4.getBoardSize());
-                stmt.setInt(4, 2); // Connect4 = 2 joueurs
+                stmt.setInt(4, 2);
                 stmt.executeUpdate();
             }
 
-            // --- 2️⃣ Supprimer les anciens tokens ---
+            // --- 2️⃣ Insérer les joueurs si non existants ---
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "DELETE FROM game_player WHERE game_id = ?")) {
+                stmt.setString(1, gameId);
+                stmt.executeUpdate();
+            }
+
+            for (UUID playerId : c4.getPlayerIds()) {
+                try (PreparedStatement stmt = conn.prepareStatement(
+                        "INSERT INTO game_player (game_id, player_id) VALUES (?, ?) " +
+                                "ON DUPLICATE KEY UPDATE player_id = player_id")) {
+                    stmt.setString(1, gameId);
+                    stmt.setString(2, playerId.toString());
+                    stmt.executeUpdate();
+                }
+            }
+
+            // --- 3️⃣ Supprimer les anciens tokens ---
             try (PreparedStatement stmt = conn.prepareStatement(
                     "DELETE FROM game_token WHERE game_id = ?")) {
                 stmt.setString(1, gameId);
                 stmt.executeUpdate();
             }
 
-            // --- 3️⃣ Insérer les tokens ---
+            // --- 4️⃣ Insérer les tokens ---
             try (PreparedStatement stmt = conn.prepareStatement(
                     "INSERT INTO game_token (game_id, owner_id, x, y, token_name) VALUES (?, ?, ?, ?, ?)")) {
+
                 for (Map.Entry<CellPosition, Token> entry : c4.getBoard().entrySet()) {
                     Token token = entry.getValue();
                     CellPosition pos = entry.getKey();
@@ -68,6 +87,7 @@ public class MySQLConnectFourDAO extends AbstractMySQLGameDAO {
                     stmt.setString(5, token.getName());
                     stmt.addBatch();
                 }
+
                 stmt.executeBatch();
             }
 
@@ -86,23 +106,23 @@ public class MySQLConnectFourDAO extends AbstractMySQLGameDAO {
         }
 
         try {
-            // --- 1️⃣ Charger le jeu ---
+            // 1️⃣ Charger le jeu
             int boardSize;
             try (PreparedStatement stmt = databaseConnection.getConnection().prepareStatement(
                     "SELECT board_size FROM game WHERE id = ?")) {
                 stmt.setString(1, gameId);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (!rs.next()) {
-                        return null;
+                        return null; // pas de jeu trouvé
                     }
                     boardSize = rs.getInt("board_size");
                 }
             }
 
-            // --- 2️⃣ Charger les joueurs ---
+            // 2️⃣ Charger les joueurs
             List<UUID> players = new ArrayList<>();
             try (PreparedStatement stmt = databaseConnection.getConnection().prepareStatement(
-                    "SELECT player_id FROM game_player WHERE game_id = ? ORDER BY id ASC")) {
+                    "SELECT player_id FROM game_player WHERE game_id = ?")) {
                 stmt.setString(1, gameId);
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
@@ -115,7 +135,7 @@ public class MySQLConnectFourDAO extends AbstractMySQLGameDAO {
                 throw new IllegalStateException("Expected 2 players, found: " + players.size());
             }
 
-            // --- 3️⃣ Charger les tokens ---
+            // 3️⃣ Charger les tokens
             List<TokenPosition<UUID>> tokenPositions = new ArrayList<>();
             try (PreparedStatement stmt = databaseConnection.getConnection().prepareStatement(
                     "SELECT owner_id, x, y, token_name FROM game_token WHERE game_id = ?")) {
@@ -132,13 +152,13 @@ public class MySQLConnectFourDAO extends AbstractMySQLGameDAO {
                 }
             }
 
-            // --- 4️⃣ Créer le jeu via la factory ---
+            // 4️⃣ Créer le jeu via la factory
             return factory.createGameWithIds(
                     UUID.fromString(gameId),
                     boardSize,
                     players,
                     tokenPositions,
-                    Collections.emptyList() // aucun token retiré pour Connect4
+                    Collections.emptyList() // aucun token retiré pour ConnectFour
             );
 
         } catch (SQLException | InconsistentGameDefinitionException e) {

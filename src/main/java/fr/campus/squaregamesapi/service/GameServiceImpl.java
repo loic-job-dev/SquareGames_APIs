@@ -18,7 +18,7 @@ public class GameServiceImpl implements GameService {
     private GamePlugin gamePlugin;
 
     @Autowired
-    private GameDAO mysqlTicTacToeGameDAO;
+    private GameDAO mysqlConnectFourGameDAO;
 
     @Autowired
     public GameServiceImpl(List<GamePlugin> gamePlugins) {
@@ -37,12 +37,12 @@ public class GameServiceImpl implements GameService {
 
     public Game createGame() {
         Game game = this.gamePlugin.createGame();
-        mysqlTicTacToeGameDAO.saveGame(game);
+        mysqlConnectFourGameDAO.saveGame(game);
         return game;
     }
 
     public Game getGame(String gameId) {
-        Game game = mysqlTicTacToeGameDAO.getGameById(gameId);
+        Game game = mysqlConnectFourGameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -50,7 +50,7 @@ public class GameServiceImpl implements GameService {
     }
 
     public List<String> getSessions() {
-        List<Game> games = this.mysqlTicTacToeGameDAO.getGames();
+        List<Game> games = this.mysqlConnectFourGameDAO.getGames();
         List<String> gamesIds = new ArrayList<>();
         for (Game game : games) {
             String gameId = game.getId().toString();
@@ -60,7 +60,7 @@ public class GameServiceImpl implements GameService {
     };
 
     public String getGameStatus(String gameId) {
-        Game game = mysqlTicTacToeGameDAO.getGameById(gameId);
+        Game game = mysqlConnectFourGameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -68,7 +68,7 @@ public class GameServiceImpl implements GameService {
     }
 
     public AbstractGameDTO getGameDTO(String gameId) {
-        Game game = mysqlTicTacToeGameDAO.getGameById(gameId);
+        Game game = mysqlConnectFourGameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -84,7 +84,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public AbstractGameDTO playGame(String gameId, int j, int k) throws InvalidPositionException {
-        Game game = mysqlTicTacToeGameDAO.getGameById(gameId);
+        Game game = mysqlConnectFourGameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -96,7 +96,7 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new IllegalArgumentException("No plugin found for game type"));
 
         plugin.play(game, j, k);
-        mysqlTicTacToeGameDAO.saveGame(game);
+        mysqlConnectFourGameDAO.saveGame(game);
 
         return plugin.buildDTO(game);
     }
