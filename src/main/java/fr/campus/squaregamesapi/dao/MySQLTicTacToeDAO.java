@@ -1,15 +1,16 @@
 package fr.campus.squaregamesapi.dao;
 
-import fr.le_campus_numerique.square_games.engine.Game;
-import fr.le_campus_numerique.square_games.engine.GameStatus;
-import fr.le_campus_numerique.square_games.engine.InconsistentGameDefinitionException;
-import fr.le_campus_numerique.square_games.engine.TokenPosition;
+import fr.campus.squaregamesapi.interfaces.GameDAO;
+import fr.le_campus_numerique.square_games.engine.*;
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGame;
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGameFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 @Component("mysqlTicTacToeGameDAO")
@@ -18,129 +19,134 @@ public class MySQLTicTacToeDAO extends AbstractMySQLGameDAO {
     @Autowired
     private DatabaseConnection databaseConnection;
 
-    public MySQLTicTacToeDAO(DatabaseConnection databaseConnection) {
-        this.databaseConnection = databaseConnection;
-    }
+    private final TicTacToeGameFactory factory = new TicTacToeGameFactory();
 
     @Override
-    protected String getSelectSQL() {
-        return "SELECT * FROM TicTacToeGame WHERE id = ?";
-    }
+    public void saveGame(Game game) {
+        if (!(game instanceof TicTacToeGame ttt)) {
+            throw new IllegalArgumentException("Expected TicTacToeGame");
+        }
 
-    @Override
-    protected String getDeleteSQL() {
-        return "DELETE FROM TicTacToeCell WHERE game_id = ?";
-    }
+        String gameId = ttt.getId().toString();
+        String factoryId = ttt.getFactoryId();
 
-    @Override
-    protected List<TokenPosition<UUID>> loadTokens(Connection conn, String gameId) throws SQLException {
-        String sql = "SELECT x, y, owner_id, symbol FROM TicTacToeCell WHERE game_id = ?";
-        List<TokenPosition<UUID>> tokens = new ArrayList<>();
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, gameId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int x = rs.getInt("x");
-                    int y = rs.getInt("y");
-                    UUID owner = UUID.fromString(rs.getString("owner_id"));
-                    String symbol = rs.getString("symbol");
-                    tokens.add(new TokenPosition<>(owner, symbol, x, y));
-                }
+        try {
+            Connection conn = databaseConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // --- 1️⃣ Insert or update the game ---
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "INSERT INTO game (id, factory_id, board_size, player_count) " +
+                            "VALUES (?, ?, ?, ?) " +
+                            "ON DUPLICATE KEY UPDATE factory_id = VALUES(factory_id), board_size = VALUES(board_size), player_count = VALUES(player_count)")) {
+
+                stmt.setString(1, gameId);
+                stmt.setString(2, factoryId);
+                stmt.setInt(3, ttt.getBoardSize());
+                stmt.setInt(4, 2);
+                stmt.executeUpdate();
             }
-        }
-        return tokens;
-    }
 
-    @Override
-    protected void saveGameInfo(Connection conn, Game game) throws SQLException {
-        String sql = """
-            INSERT INTO TicTacToeGame (id, board_size, player_a, player_b, winner_id)
-            VALUES (?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                board_size = VALUES(board_size),
-                player_a = VALUES(player_a),
-                player_b = VALUES(player_b),
-                winner_id = VALUES(winner_id)
-        """;
-        TicTacToeGame ttt = (TicTacToeGame) game;
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, ttt.getId().toString());
-            ps.setInt(2, ttt.getBoardSize());
-            ps.setString(3, ttt.getPlayerIds().toArray()[0].toString());
-            ps.setString(4, ttt.getPlayerIds().toArray()[1].toString());
-            ps.setString(5, ttt.getStatus() == GameStatus.TERMINATED
-                    ? ttt.getCurrentPlayerId().toString()
-                    : null);
-            ps.executeUpdate();
-        }
-    }
-
-    @Override
-    protected void saveTokens(Connection conn, Game game) throws SQLException {
-        TicTacToeGame ttt = (TicTacToeGame) game;
-
-        // Supprimer anciens tokens
-        try (PreparedStatement ps = conn.prepareStatement("DELETE FROM TicTacToeCell WHERE game_id = ?")) {
-            ps.setString(1, ttt.getId().toString());
-            ps.executeUpdate();
-        }
-
-        // Réinsérer les tokens
-        String insertSQL = "INSERT INTO TicTacToeCell (game_id, x, y, owner_id, symbol) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(insertSQL)) {
-            ttt.getBoard().forEach((pos, token) -> {
-                try {
-                    ps.setString(1, ttt.getId().toString());
-                    ps.setInt(2, pos.x());
-                    ps.setInt(3, pos.y());
-                    ps.setString(4, token.getOwnerId().orElseThrow().toString());
-                    ps.setString(5, token.getName());
-                    ps.addBatch();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            ps.executeBatch();
-        }
-    }
-
-    @Override
-    protected Game buildGameFromResultSet(ResultSet rs, List<TokenPosition<UUID>> tokens)
-            throws SQLException, InconsistentGameDefinitionException {
-        UUID gameId = UUID.fromString(rs.getString("id"));
-        int boardSize = rs.getInt("board_size");
-        UUID playerA = UUID.fromString(rs.getString("player_a"));
-        UUID playerB = UUID.fromString(rs.getString("player_b"));
-
-        TicTacToeGameFactory factory = new TicTacToeGameFactory();
-        return factory.createGameWithIds(
-                gameId,
-                boardSize,
-                List.of(playerA, playerB),
-                tokens,
-                Collections.emptyList() // removed tokens
-        );
-    }
-
-    @Override
-    public List<Game> getGames() {
-        List<Game> list = new ArrayList<>();
-        String sql = "SELECT id FROM TicTacToeGame";
-
-        try (Connection conn = databaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                String id = rs.getString("id");
-                Game g = getGameById(id);
-                if (g != null) list.add(g);
+            // --- 2️⃣ Supprimer les anciens tokens ---
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "DELETE FROM game_token WHERE game_id = ?")) {
+                stmt.setString(1, gameId);
+                stmt.executeUpdate();
             }
+
+            // --- 3️⃣ Insérer les tokens ---
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "INSERT INTO game_token (game_id, owner_id, x, y, token_name) VALUES (?, ?, ?, ?, ?)")) {
+
+                for (Map.Entry<CellPosition, Token> entry : ttt.getBoard().entrySet()) {
+                    Token token = entry.getValue();
+                    CellPosition pos = entry.getKey();
+                    UUID ownerId = token.getOwnerId().orElseThrow();
+
+                    stmt.setString(1, gameId);
+                    stmt.setString(2, ownerId.toString());
+                    stmt.setInt(3, pos.x());
+                    stmt.setInt(4, pos.y());
+                    stmt.setString(5, token.getName());
+                    stmt.addBatch();
+                }
+
+                stmt.executeBatch();
+            }
+
+            conn.commit();
+            conn.setAutoCommit(true);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to save TicTacToe game", e);
         }
-        return list;
+    }
+
+
+    @Override
+    protected Game loadGame(String gameId, String factoryId) {
+        if (!"tictactoe".equals(factoryId)) {
+            throw new IllegalArgumentException("Factory ID mismatch: " + factoryId);
+        }
+
+        try {
+            // 1️⃣ Charger le jeu
+            int boardSize;
+            try (PreparedStatement stmt = databaseConnection.getConnection().prepareStatement(
+                    "SELECT board_size FROM game WHERE id = ?")) {
+                stmt.setString(1, gameId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (!rs.next()) {
+                        return null; // pas de jeu trouvé
+                    }
+                    boardSize = rs.getInt("board_size");
+                }
+            }
+
+            // 2️⃣ Charger les joueurs
+            List<UUID> players = new ArrayList<>();
+            try (PreparedStatement stmt = databaseConnection.getConnection().prepareStatement(
+                    "SELECT player_id FROM game_player WHERE game_id = ?")) {
+                stmt.setString(1, gameId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        players.add(UUID.fromString(rs.getString("player_id")));
+                    }
+                }
+            }
+
+            if (players.size() != 2) {
+                throw new IllegalStateException("Expected 2 players, found: " + players.size());
+            }
+
+            // 3️⃣ Charger les tokens
+            List<TokenPosition<UUID>> tokenPositions = new ArrayList<>();
+            try (PreparedStatement stmt = databaseConnection.getConnection().prepareStatement(
+                    "SELECT owner_id, x, y, token_name FROM game_token WHERE game_id = ?")) {
+                stmt.setString(1, gameId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        UUID owner = UUID.fromString(rs.getString("owner_id"));
+                        int x = rs.getInt("x");
+                        int y = rs.getInt("y");
+                        String tokenName = rs.getString("token_name");
+
+                        tokenPositions.add(new TokenPosition<>(owner, tokenName, x, y));
+                    }
+                }
+            }
+
+            // 4️⃣ Créer le jeu via la factory
+            return factory.createGameWithIds(
+                    UUID.fromString(gameId),
+                    boardSize,
+                    players,
+                    tokenPositions,
+                    Collections.emptyList() // aucun token retiré pour TicTacToe
+            );
+
+        } catch (SQLException | InconsistentGameDefinitionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
