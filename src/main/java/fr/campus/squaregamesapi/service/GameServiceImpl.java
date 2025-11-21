@@ -14,16 +14,17 @@ import java.util.*;
 @Service
 public class GameServiceImpl implements GameService {
 
-    private final GameDAO gameDAO;
     private final List<GamePlugin> gamePlugins;
     private GamePlugin gamePlugin;
 
     //private final Map<String, Game> games = new HashMap<>();
 
     @Autowired
-    public GameServiceImpl(List<GamePlugin> gamePlugins, GameDAO  gameDAO) {
+    private GameDAO mysqlGameDAO;
+
+    @Autowired
+    public GameServiceImpl(List<GamePlugin> gamePlugins) {
         this.gamePlugins = gamePlugins;
-        this.gameDAO = gameDAO;
     }
 
     public void setGamePlugin(String gameId) {
@@ -38,13 +39,13 @@ public class GameServiceImpl implements GameService {
 
     public Game createGame() {
         Game game = this.gamePlugin.createGame();
-        gameDAO.addGame(game);
+        mysqlGameDAO.addGame(game);
         //games.put(game.getId().toString(), game);
         return game;
     }
 
     public Game getGame(String gameId) {
-        Game game = gameDAO.getGameById(gameId);
+        Game game = mysqlGameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -53,7 +54,7 @@ public class GameServiceImpl implements GameService {
     }
 
     public List<String> getSessions() {
-        List<Game> games = this.gameDAO.getGames();
+        List<Game> games = this.mysqlGameDAO.getGames();
         List<String> gamesIds = new ArrayList<>();
         for (Game game : games) {
             String gameId = game.getId().toString();
@@ -63,7 +64,7 @@ public class GameServiceImpl implements GameService {
     };
 
     public String getGameStatus(String gameId) {
-        Game game = gameDAO.getGameById(gameId);
+        Game game = mysqlGameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -71,7 +72,7 @@ public class GameServiceImpl implements GameService {
     }
 
     public GameDTO getGameDTO(String gameId) {
-        Game game = gameDAO.getGameById(gameId);
+        Game game = mysqlGameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -87,7 +88,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public GameDTO playGame(String gameId, int j, int k) throws InvalidPositionException {
-        Game game = gameDAO.getGameById(gameId);
+        Game game = mysqlGameDAO.getGameById(gameId);
         if (game == null) {
             throw new IllegalArgumentException("Game not found: " + gameId);
         }
@@ -99,7 +100,7 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new IllegalArgumentException("No plugin found for game type"));
 
         plugin.play(game, j, k);
-        gameDAO.updateGame(game);
+        mysqlGameDAO.updateGame(game);
 
         return plugin.buildDTO(game);
     }

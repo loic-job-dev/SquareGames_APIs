@@ -1,34 +1,37 @@
-CREATE DATABASE IF NOT EXISTS square_games;
+DROP DATABASE IF EXISTS square_games;
+CREATE DATABASE square_games;
 USE square_games;
-CREATE TABLE `TicTacToePlayers` (
-  `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `playerA` varchar(255),
-  `playerB` varchar(255),
-  `created_at` timestamp
+
+-- Table des jeux
+CREATE TABLE TicTacToeGame (
+                               id VARCHAR(36) PRIMARY KEY,             -- correspond à UUID du jeu
+                               board_size INT NOT NULL,
+                               player_a VARCHAR(36) NOT NULL,         -- UUID joueur A
+                               player_b VARCHAR(36) NOT NULL,         -- UUID joueur B
+                               winner_id VARCHAR(36),                  -- UUID gagnant (null si ongoing)
+                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE `TicTacToeGame` (
-  `id` varchar(255) PRIMARY KEY,
-  `status` varchar(255),
-  `boardSize` int,
-  `currentPlayer` varchar(255),
-  `winner` varchar(255),
-  `remainingMoves` int,
-  `players_id` integer NOT NULL,
-  `grid` text COMMENT 'Optional: grid as CSV or JSON for fast access',
-  `created_at` timestamp
+-- Table des cellules occupées
+CREATE TABLE TicTacToeCell (
+                               id INT PRIMARY KEY AUTO_INCREMENT,
+                               game_id VARCHAR(36) NOT NULL,
+                               x INT NOT NULL,
+                               y INT NOT NULL,
+                               owner_id VARCHAR(36) NOT NULL,         -- UUID du propriétaire du jeton
+                               symbol CHAR(1) NOT NULL,               -- 'X' ou 'O' pour faciliter la lecture
+                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                               FOREIGN KEY (game_id) REFERENCES TicTacToeGame(id)
 );
 
-CREATE TABLE `TicTacToeCell` (
-  `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `game_id` varchar(255) NOT NULL,
-  `x` int,
-  `y` int,
-  `symbol` varchar(255),
-  `player_id` integer,
-  `created_at` timestamp
+-- Table pour les jetons non placés (remaining tokens)
+CREATE TABLE TicTacToeRemainingToken (
+                                         id INT PRIMARY KEY AUTO_INCREMENT,
+                                         game_id VARCHAR(36) NOT NULL,
+                                         owner_id VARCHAR(36) NOT NULL,         -- UUID du propriétaire
+                                         symbol CHAR(1) NOT NULL,
+                                         position_x INT,                        -- NULL si non placé
+                                         position_y INT,                        -- NULL si non placé
+                                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                         FOREIGN KEY (game_id) REFERENCES TicTacToeGame(id)
 );
-
-ALTER TABLE `TicTacToeGame` ADD FOREIGN KEY (`players_id`) REFERENCES `TicTacToePlayers` (`id`);
-
-ALTER TABLE `TicTacToeCell` ADD FOREIGN KEY (`game_id`) REFERENCES `TicTacToeGame` (`id`);
