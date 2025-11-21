@@ -39,7 +39,7 @@ public class GameServiceImpl implements GameService {
 
     public Game createGame() {
         Game game = this.gamePlugin.createGame();
-        mysqlGameDAO.addGame(game);
+        mysqlGameDAO.saveGame(game);
         //games.put(game.getId().toString(), game);
         return game;
     }
@@ -100,7 +100,7 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new IllegalArgumentException("No plugin found for game type"));
 
         plugin.play(game, j, k);
-        mysqlGameDAO.updateGame(game);
+        mysqlGameDAO.saveGame(game);
 
         return plugin.buildDTO(game);
     }

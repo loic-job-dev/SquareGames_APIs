@@ -24,17 +24,10 @@ public class CollectionGameDAO implements GameDAO {
     }
 
     @Override
-    public void addGame(Game game) {
+    public void saveGame(Game game) {
         games.put(game.getId().toString(), game);
     }
 
-    @Override
-    public void updateGame(Game game) {
-        if (!games.containsKey(game.getId().toString())) {
-            throw new IllegalArgumentException("Le jeu n'existe pas : " + game.getId());
-        }
-        games.put(game.getId().toString(), game);
-    }
 
     @Override
     public void deleteGame(Game game) {
