@@ -8,7 +8,9 @@ import fr.campus.squaregamesapi.interfaces.GameService;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.InvalidPositionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -47,7 +49,10 @@ public class GameController {
         try {
             return this.gameService.playGame(gameId, move.getX(), move.getY());
         } catch (InvalidPositionException e) {
-            throw new RuntimeException(e);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Impossible de jouer à cette position : " + e.getMessage()
+            );
         }
     }
 }
