@@ -1,9 +1,9 @@
 package fr.campus.squaregamesapi.dto.taquin;
 
-import fr.campus.squaregamesapi.dto.GameDTO;
+import fr.campus.squaregamesapi.dto.AbstractGameDTO;
 import java.util.List;
 
-public class TaquinGameDTO extends GameDTO {
+public class TaquinAbstractGameDTO extends AbstractGameDTO {
 
     private final int boardSize;
     private final String[][] grid;
@@ -11,13 +11,13 @@ public class TaquinGameDTO extends GameDTO {
     private final int emptyX;
     private final int emptyY;
 
-    public TaquinGameDTO(String gameId,
-                         String status,
-                         int boardSize,
-                         String[][] grid,
-                         List<TaquinTileDTO> tiles,
-                         int emptyX,
-                         int emptyY) {
+    public TaquinAbstractGameDTO(String gameId,
+                                 String status,
+                                 int boardSize,
+                                 String[][] grid,
+                                 List<TaquinTileDTO> tiles,
+                                 int emptyX,
+                                 int emptyY) {
         super(gameId, status);
         this.boardSize = boardSize;
         this.grid = grid;

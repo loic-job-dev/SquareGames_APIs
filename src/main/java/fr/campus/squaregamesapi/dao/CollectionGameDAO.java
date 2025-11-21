@@ -30,7 +30,7 @@ public class CollectionGameDAO implements GameDAO {
 
 
     @Override
-    public void deleteGame(Game game) {
-        games.remove(game.getId().toString());
+    public void deleteGame(String gameId) {
+        games.remove(gameId);
     }
 }

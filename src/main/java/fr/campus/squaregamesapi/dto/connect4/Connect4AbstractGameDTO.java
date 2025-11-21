@@ -1,10 +1,10 @@
 package fr.campus.squaregamesapi.dto.connect4;
 
-import fr.campus.squaregamesapi.dto.GameDTO;
+import fr.campus.squaregamesapi.dto.AbstractGameDTO;
 
 import java.util.List;
 
-public class Connect4GameDTO extends GameDTO {
+public class Connect4AbstractGameDTO extends AbstractGameDTO {
 
     private final String redPlayer;
     private final String yellowPlayer;
@@ -14,7 +14,7 @@ public class Connect4GameDTO extends GameDTO {
     private final String[][] grid;
     private final List<Connect4TokenDTO> tokens;
 
-    public Connect4GameDTO(
+    public Connect4AbstractGameDTO(
             String gameId,
             String status,
             String redPlayer,

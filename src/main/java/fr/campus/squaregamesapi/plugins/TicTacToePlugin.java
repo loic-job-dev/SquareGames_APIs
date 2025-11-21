@@ -1,7 +1,7 @@
 package fr.campus.squaregamesapi.plugins;
 
 import fr.campus.squaregamesapi.dto.tictactoe.TicTacToeCellDTO;
-import fr.campus.squaregamesapi.dto.tictactoe.TicTacToeGameDTO;
+import fr.campus.squaregamesapi.dto.tictactoe.TicTacToeAbstractGameDTO;
 import fr.campus.squaregamesapi.dto.tictactoe.TicTacToePlayersDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.le_campus_numerique.square_games.engine.*;
@@ -48,7 +48,7 @@ public class TicTacToePlugin implements GamePlugin {
     }
 
     @Override
-    public TicTacToeGameDTO buildDTO(Game game) {
+    public TicTacToeAbstractGameDTO buildDTO(Game game) {
         TicTacToePlayersDTO players = new TicTacToePlayersDTO(
                 game.getPlayerIds().toArray(new UUID[0])[0].toString(),
                 game.getPlayerIds().toArray(new UUID[0])[1].toString()
@@ -80,7 +80,7 @@ public class TicTacToePlugin implements GamePlugin {
             grid[position.y()][position.x()] = token.getName();
         });
 
-        return new TicTacToeGameDTO(
+        return new TicTacToeAbstractGameDTO(
                 gameId,
                 game.getBoardSize(),
                 game.getStatus().name(),

@@ -8,5 +8,5 @@ public interface GameDAO {
     public List<Game> getGames();
     public Game getGameById(String gameId);
     public void saveGame(Game game);
-    public void deleteGame(Game game);
+    public void deleteGame(String gameId);
 }

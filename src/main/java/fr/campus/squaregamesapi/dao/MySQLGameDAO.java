@@ -192,11 +192,11 @@ public class MySQLGameDAO implements GameDAO {
 
 
     @Override
-    public void deleteGame(Game game) {
+    public void deleteGame(String gameId) {
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement("DELETE FROM games WHERE id = ?")) {
 
-            ps.setString(1, game.getId().toString());
+            ps.setString(1, gameId);
             ps.executeUpdate();
 
         } catch (SQLException e) {

@@ -1,7 +1,7 @@
 package fr.campus.squaregamesapi.plugins;
 
-import fr.campus.squaregamesapi.dto.GameDTO;
-import fr.campus.squaregamesapi.dto.taquin.TaquinGameDTO;
+import fr.campus.squaregamesapi.dto.AbstractGameDTO;
+import fr.campus.squaregamesapi.dto.taquin.TaquinAbstractGameDTO;
 import fr.campus.squaregamesapi.dto.taquin.TaquinTileDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.le_campus_numerique.square_games.engine.*;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -64,7 +63,7 @@ public class TaquinPlugin implements GamePlugin {
     }
 
     @Override
-    public GameDTO buildDTO(Game game) {
+    public AbstractGameDTO buildDTO(Game game) {
         TaquinGame tg = (TaquinGame) game;
         int size = tg.getBoardSize();
 
@@ -99,7 +98,7 @@ public class TaquinPlugin implements GamePlugin {
                 .toList();
 
         // Construire le DTO complet
-        return new TaquinGameDTO(
+        return new TaquinAbstractGameDTO(
                 tg.getId().toString(),
                 tg.getStatus().name(),
                 size,

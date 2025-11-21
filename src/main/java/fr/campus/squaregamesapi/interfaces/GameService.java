@@ -1,6 +1,6 @@
 package fr.campus.squaregamesapi.interfaces;
 
-import fr.campus.squaregamesapi.dto.GameDTO;
+import fr.campus.squaregamesapi.dto.AbstractGameDTO;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.InvalidPositionException;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public interface GameService {
 
     public String getGameStatus(String gameId);
 
-    public GameDTO getGameDTO(String gameId);
+    public AbstractGameDTO getGameDTO(String gameId);
 
-    public GameDTO playGame(String gameId, int x, int y) throws InvalidPositionException;
+    public AbstractGameDTO playGame(String gameId, int x, int y) throws InvalidPositionException;
 }

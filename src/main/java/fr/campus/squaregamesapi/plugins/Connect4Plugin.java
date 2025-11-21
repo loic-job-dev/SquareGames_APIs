@@ -1,8 +1,8 @@
 package fr.campus.squaregamesapi.plugins;
 
-import fr.campus.squaregamesapi.dto.GameDTO;
+import fr.campus.squaregamesapi.dto.AbstractGameDTO;
 import fr.campus.squaregamesapi.dto.connect4.Connect4TokenDTO;
-import fr.campus.squaregamesapi.dto.connect4.Connect4GameDTO;
+import fr.campus.squaregamesapi.dto.connect4.Connect4AbstractGameDTO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.le_campus_numerique.square_games.engine.*;
 import fr.le_campus_numerique.square_games.engine.connectfour.ConnectFourGameFactory;
@@ -49,7 +49,7 @@ public class Connect4Plugin implements GamePlugin {
     }
 
     @Override
-    public GameDTO buildDTO(Game game) {
+    public AbstractGameDTO buildDTO(Game game) {
 
         ConnectFourGame cf = (ConnectFourGame) game;
 
@@ -87,7 +87,7 @@ public class Connect4Plugin implements GamePlugin {
                 })
                 .toList();
 
-        return new Connect4GameDTO(
+        return new Connect4AbstractGameDTO(
                 cf.getId().toString(),
                 cf.getStatus().name(),
                 redPlayer,
