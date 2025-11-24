@@ -1,7 +1,6 @@
 package fr.campus.squaregamesapi.service;
 
 import fr.campus.squaregamesapi.dto.AbstractGameDTO;
-import fr.campus.squaregamesapi.interfaces.GameDAO;
 import fr.campus.squaregamesapi.interfaces.GamePlugin;
 import fr.campus.squaregamesapi.interfaces.GameService;
 import fr.campus.squaregamesapi.repositories.TicTacToeGameRepository;
@@ -18,9 +17,6 @@ public class GameServiceImpl implements GameService {
 
     private final List<GamePlugin> gamePlugins;
     private GamePlugin gamePlugin;
-
-    @Autowired
-    private GameDAO mysqlTicTacToeGameDAO;
 
     @Autowired
     private TicTacToeGameRepository ticTacToeGameRepository;
