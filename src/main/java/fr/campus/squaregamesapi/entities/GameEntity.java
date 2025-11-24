@@ -20,22 +20,37 @@ public class GameEntity {
     @Column(name = "player_count", nullable = false)
     private int playerCount;
 
+    @Column(name="current_player")
+    private String currentPlayerId;
+
     @Column(name = "winner_id")
     private String winnerId;
+
+    @Column(name = "current_player")
+    private String currentPlayer;
+
+    @Column(name = "winner_id")
+    private String winnerId;
+
+    @Column(name = "is_finished")
+    private boolean finished;
+
+    @Column(name = "move_count")
+    private int moveCount;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     // Relation avec game_player
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GamePlayerEntity> players;
 
     // Relation avec game_token
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GameTokenEntity> tokens;
 
     // Relation avec game_remaining_token
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval=true, fetch = FetchType.LAZY)
     private List<GameRemainingTokenEntity> remainingTokens;
 
     // getters et setters
@@ -111,4 +126,13 @@ public class GameEntity {
     public void setRemainingTokens(List<GameRemainingTokenEntity> remainingTokens) {
         this.remainingTokens = remainingTokens;
     }
+
+    public String getCurrentPlayerId() {
+        return currentPlayerId;
+    }
+
+    public void setCurrentPlayerId(String currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+    }
+
 }

@@ -51,7 +51,7 @@ public class GameServiceImpl implements GameService {
     }
 
     public List<String> getSessions() {
-        List<Game> games = ticTacToeGameRepository.getGames();
+        List<TicTacToeGame> games = ticTacToeGameRepository.getGames();
         List<String> gamesIds = new ArrayList<>();
         for (Game game : games) {
             String gameId = game.getId().toString();

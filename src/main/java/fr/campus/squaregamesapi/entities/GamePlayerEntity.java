@@ -21,6 +21,9 @@ public class GamePlayerEntity {
     @Column(length = 1)
     private String symbol; // facultatif pour TTT / Connect4
 
+    @Column(name = "player_index", nullable = false)
+    private int playerIndex; // 0 = A, 1 = B
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

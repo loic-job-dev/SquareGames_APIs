@@ -46,7 +46,7 @@ public class GameController {
         Game game = this.gameService.createGame();
 
         if (game instanceof TicTacToeGame ttt) {
-            ticTacToeGameRepository.saveGame(ttt);
+            ticTacToeGameRepository.saveNewGame(ttt);
         }
 
         return game.getId().toString();
@@ -119,12 +119,19 @@ public class GameController {
             @Parameter(description = "Move details", required = true)
             @RequestBody PlayMoveDTO move
     ) {
-        TicTacToeGame game = (TicTacToeGame) loadGameById(gameId);
-
         try {
-            AbstractGameDTO dto = this.gameService.playGame(game.getId().toString(), move.getX(), move.getY());
-            ticTacToeGameRepository.saveGame(game);
+            // 1️⃣ Faire jouer le coup via le service
+            AbstractGameDTO dto = this.gameService.playGame(gameId, move.getX(), move.getY());
+
+            // 2️⃣ Récupérer l'état mis à jour du jeu depuis le service
+            TicTacToeGame updatedGame = (TicTacToeGame) this.gameService.getGame(gameId);
+
+            // 3️⃣ Sauvegarder le jeu mis à jour dans le repository
+            ticTacToeGameRepository.saveGame(updatedGame);
+
+            // 4️⃣ Retourner DTO
             return dto;
+
         } catch (InvalidPositionException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
