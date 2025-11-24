@@ -12,13 +12,13 @@ public class DatabaseConnection {
 
     private Connection connection;
 
-    @Value("${db.url}")
-    private String url;
+    @Value("${spring.datasource.url}")
+    private String url = "jdbc:mysql://localhost:3306/square_games";
 
-    @Value("${db.user}")
+    @Value("${spring.datasource.username}")
     private String user;
 
-    @Value("${db.password}")
+    @Value("${spring.datasource.password}")
     private String password;
 
     public Connection getConnection() throws SQLException {
