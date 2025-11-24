@@ -1,11 +1,12 @@
-package fr.campus.squaregamesapi.jpa;
+package fr.campus.squaregamesapi.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "game_remaining_token")
-public class GameRemainingTokenEntity {
+@Table(name = "game_token")
+public class GameTokenEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,14 +18,14 @@ public class GameRemainingTokenEntity {
     @Column(name = "owner_id", nullable = false)
     private String ownerId;
 
+    @Column(nullable = false)
+    private int x;
+
+    @Column(nullable = false)
+    private int y;
+
     @Column(name = "token_name", length = 10)
     private String tokenName;
-
-    @Column(name = "position_x")
-    private Integer positionX; // nullable
-
-    @Column(name = "position_y")
-    private Integer positionY; // nullable
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -55,28 +56,28 @@ public class GameRemainingTokenEntity {
         this.ownerId = ownerId;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public String getTokenName() {
         return tokenName;
     }
 
     public void setTokenName(String tokenName) {
         this.tokenName = tokenName;
-    }
-
-    public Integer getPositionY() {
-        return positionY;
-    }
-
-    public void setPositionY(Integer positionY) {
-        this.positionY = positionY;
-    }
-
-    public Integer getPositionX() {
-        return positionX;
-    }
-
-    public void setPositionX(Integer positionX) {
-        this.positionX = positionX;
     }
 
     public LocalDateTime getCreatedAt() {

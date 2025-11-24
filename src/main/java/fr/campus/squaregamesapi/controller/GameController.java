@@ -4,7 +4,7 @@ import fr.campus.squaregamesapi.dto.AbstractGameDTO;
 import fr.campus.squaregamesapi.dto.PlayMoveDTO;
 import fr.campus.squaregamesapi.dto.GameCreationParams;
 import fr.campus.squaregamesapi.interfaces.GameService;
-import fr.campus.squaregamesapi.service.TicTacToeGameService;
+import fr.campus.squaregamesapi.repositories.TicTacToeGameRepository;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.InvalidPositionException;
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGame;
@@ -28,7 +28,7 @@ public class GameController {
     private GameService gameService;
 
     @Autowired
-    private TicTacToeGameService ticTacToeGameService;
+    private TicTacToeGameRepository ticTacToeGameRepository;
 
     @Operation(
             summary = "Create a new game",
@@ -46,7 +46,7 @@ public class GameController {
         Game game = this.gameService.createGame();
 
         if (game instanceof TicTacToeGame ttt) {
-            ticTacToeGameService.saveGame(ttt);
+            ticTacToeGameRepository.saveGame(ttt);
         }
 
         return game.getId().toString();
@@ -123,7 +123,7 @@ public class GameController {
 
         try {
             AbstractGameDTO dto = this.gameService.playGame(game.getId().toString(), move.getX(), move.getY());
-            ticTacToeGameService.saveGame(game);
+            ticTacToeGameRepository.saveGame(game);
             return dto;
         } catch (InvalidPositionException e) {
             throw new ResponseStatusException(
@@ -135,7 +135,7 @@ public class GameController {
 
     // Utility method to load game by ID
     private Game loadGameById(String gameId) {
-        TicTacToeGame game = ticTacToeGameService.loadGame(gameId);
+        TicTacToeGame game = ticTacToeGameRepository.loadGame(gameId);
         if (game == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Jeu non trouvé : " + gameId);
         }

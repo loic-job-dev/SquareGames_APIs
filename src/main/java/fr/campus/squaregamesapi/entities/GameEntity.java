@@ -1,4 +1,4 @@
-package fr.campus.squaregamesapi.jpa;
+package fr.campus.squaregamesapi.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

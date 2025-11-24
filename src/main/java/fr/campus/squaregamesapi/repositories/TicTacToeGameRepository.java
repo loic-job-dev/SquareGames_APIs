@@ -1,27 +1,21 @@
-package fr.campus.squaregamesapi.service;
+package fr.campus.squaregamesapi.repositories;
 
-import fr.campus.squaregamesapi.jpa.GameEntity;
-import fr.campus.squaregamesapi.jpa.GamePlayerEntity;
-import fr.campus.squaregamesapi.jpa.GameTokenEntity;
-import fr.campus.squaregamesapi.repositories.GameRepository;
-import fr.campus.squaregamesapi.repositories.GamePlayerRepository;
-import fr.campus.squaregamesapi.repositories.GameTokenRepository;
-import fr.le_campus_numerique.square_games.engine.CellPosition;
-import fr.le_campus_numerique.square_games.engine.InconsistentGameDefinitionException;
-import fr.le_campus_numerique.square_games.engine.Token;
-import fr.le_campus_numerique.square_games.engine.TokenPosition;
+import fr.campus.squaregamesapi.entities.GameEntity;
+import fr.campus.squaregamesapi.entities.GamePlayerEntity;
+import fr.campus.squaregamesapi.entities.GameTokenEntity;
+import fr.le_campus_numerique.square_games.engine.*;
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGame;
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGameFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+@Repository
 @Transactional
-public class TicTacToeGameService {
+public class TicTacToeGameRepository {
 
     @Autowired
     private GameRepository gameRepository;
@@ -43,10 +37,8 @@ public class TicTacToeGameService {
         gameEntity.setBoardSize(ttt.getBoardSize());
         gameEntity.setPlayerCount(ttt.getPlayerIds().size());
 
-        // --- Sauvegarder le gagnant uniquement si tu ajoutes un getter dans le moteur ---
-        // gameEntity.setWinnerId(ttt.getWinnerId() != null ? ttt.getWinnerId().toString() : null);
 
-        // --- Convertir les joueurs, en garantissant l'unicité ---
+        //Convertir les joueurs, en garantissant l'unicité
         List<GamePlayerEntity> playerEntities = ttt.getPlayerIds().stream()
                 .distinct() // élimine les doublons
                 .map(pid -> {
@@ -57,7 +49,7 @@ public class TicTacToeGameService {
                 }).collect(Collectors.toList());
         gameEntity.setPlayers(playerEntities);
 
-        // --- Convertir les tokens ---
+        //Convertir les tokens
         List<GameTokenEntity> tokenEntities = ttt.getBoard().entrySet().stream()
                 .map(entry -> {
                     CellPosition pos = entry.getKey();
@@ -106,5 +98,27 @@ public class TicTacToeGameService {
         } catch (InconsistentGameDefinitionException e) {
             throw new RuntimeException("Impossible de recréer le jeu TicTacToe", e);
         }
+    }
+
+    public void deleteGame(String gameId) {
+        gameRepository.deleteById(gameId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Game> getGames() {
+        List<Game> games = new ArrayList<>();
+
+        for (GameEntity entity : gameRepository.findAll()) {
+            Game g = loadGame(entity.getId());
+            games.add(g);
+        }
+        return games;
+    }
+
+    @Transactional(readOnly = true)
+    public TicTacToeGame getGameById(String gameId) {
+        return gameRepository.findById(gameId)
+                .map(entity -> loadGame(entity.getId()))
+                .orElse(null);
     }
 }
